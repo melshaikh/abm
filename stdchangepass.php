@@ -56,10 +56,10 @@
                         <a class="page-scroll hvrNav-stat" href="abmin.php#services">STAF ABM</a>
                     </li>
                     <li class="">
-                        <a class="page-scroll hvrNav-stat" href="majikan.php#services">MAJIKAN</a>
+                        <a class="page-scroll hvrNav-stat" href="#services">MAJIKAN</a>
                     </li>
                     <li class="">
-                        <a class="page-scroll hvrNav-stat" href="#services">PELATIH</a>
+                        <a class="page-scroll hvrNav-stat" href="pelatih.php#services">PELATIH</a>
                     </li>
                     <li class="">
                         <a class="page-scroll hvrNav-stat" href="index.php#contact">HUBUNGI KAMI</a>
@@ -138,50 +138,100 @@
 </div><!--/layer_slider-->
 <!--=== End Slider ===-->
 
+<?php
+function RandomString()
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randstring = '';
+    for ($i = 0; $i < 7; $i++) {
+        $randstring = $randstring . $characters[rand(0, strlen($characters))];
+    }
+    return $randstring;
+}
+function sendemailpassx($to,$npass)
+{    
+    error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
+    set_include_path("." . PATH_SEPARATOR . ($UserDir = dirname($_SERVER['DOCUMENT_ROOT'])) . "/pear/php" . PATH_SEPARATOR . get_include_path());
+    require_once "Mail.php";
+    $host = "mx1.hostinger.in";
+    $username = "admin@mydoa.net";
+    $password = "sugood80";
+    $port = "587";
+    //$to = "address_form_will_send_TO@example.com";
+    $email_from = "admin@mydoa.net";
+    $email_subject = "ABM UTARA ADUAN SISTEM" ;
+    $email_body = "This Email is sent to you from ABM Utara password recovery system.\n your email:".$to."\n New Password: ".$npass;
+    $email_address = "admin@mydoa.net";
+
+    $headers = array ('From' => $email_from, 'To' => $to, 'Subject' => $email_subject, 'Reply-To' => $email_address);
+    $smtp = Mail::factory('smtp', array ('host' => $host, 'port' => $port, 'auth' => true, 'username' => $username, 'password' => $password));
+    $mail = $smtp->send($to, $headers, $email_body);
+
+
+    if (PEAR::isError($mail)) {
+    return FALSE;
+} else {
+return TRUE;
+}
+}
+if(isset($_POST['changep']))
+{   
+    include 'system/access/tols/config.php';
+    $sql = "SELECT * FROM `students` WHERE `ic` = '".$_POST['email']."'";
+    if($ck = $db->query($sql)){
+        if($ck->num_rows > 0){
+            $us = $ck->fetch_assoc();
+            $opass = $us['password'];
+            $npass = RandomString();
+            $hashed = hash("sha512",$npass);
+            $sql = "UPDATE `students` SET `pass` = '".$hashed."' WHERE `ic`='".$_POST['email']."'";
+            if($db->query($sql))
+            {
+                //sendemailpass($to,$subject,$answer,$date)
+                if(sendemailpassx($us['email'],$npass))
+                $error = 'PASSWORD IS SUCCESSFULLY RESET, NEW PASSWORD IS SENT TO YOUR EMAIL';
+                else{
+                    $error = 'UNABLE TO CHANGE PASSWORD CURRENTLY, PLEASE TRY AGAIN';
+                    $sql = "UPDATE `students` SET `pass` = '".$opass."' WHERE `ic`='".$_POST['email']."'";
+                    $db->query($sql);
+                }
+            }else $error = 'UNABLE TO CHANGE PASSWORD CURRENTLY, PLEASE TRY AGAIN';
+        }else $error = 'ERROR: EMAIL NOT FOUND';
+    }
+}
+
+?>
+
     <!-- LOGIN -->
     <section id="services" class="bg-light-gray">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12 text-center">
-                    <?php if(isset($_GET['error'])) { ?>
-                    <p style="color: red"><?php echo $_GET['error'] ?></p>
+                    <h2 class="section-heading wow animated pulse animated">TERLUPA KATA LALUAN</h2><hr />
+                    <?php if(isset($error)) { ?>
+                    <h3 class="section-subheading text-muted wow animated pulse animated" style="color: red"><?php echo $error; unset($error); ?></h3>
                     <?php }  ?>
-                    <h2 class="section-heading wow animated pulse animated">LOG MASUK</h2><hr />
-                                       
+                    
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <form name="sentMessage" method="post" action="system/loginstudent.php">
+                    <form name="sentMessage" method="post" action="stdchangepass.php">
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="name" placeholder="No. KP Pelatih *" required>
+                                    <input type="text" class="form-control" name="email" placeholder="No. KP Pelatih *" required>
                                     <p class="help-block text-danger"></p>
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control" name="pass" placeholder="Kata Laluan *" required>
-                                    <p class="help-block text-danger"></p>
-                                </div>
+                                </div>                                
                             </div>
                             
                             <div class="col-sm-12 text-center">
                                 <div id="success"></div>
                                 <div class="skill-btn2">
-                                        <input type="submit" name="login" value="Log Masuk" class="hvr-bounce-to-right scroll btn btn-xl"/>
-                                        <!--<input type="submit" name="forget" value="Lupa Kata Laluan " class="hvr-bounce-to-right scroll btn btn-xl" />-->
+                                        <input type="submit" name="changep" value="Hantar" class="hvr-bounce-to-right scroll btn btn-xl"/>
                                     </div>
                             </div>
                         </div>
-                    </form>
-                    <form method="post" action="system/loginstudent.php" style="margin-top: 20px">
-                        <div class="col-sm-12 text-center">
-                                <div id="success"></div>
-                                <div class="skill-btn2">
-                                    <input type="hidden" name="access" value="abm"/>
-                                        <input type="submit" name="forget" value="Lupa Kata Laluan " class="hvr-bounce-to-right scroll btn btn-xl" />
-                                    </div>
-                            </div>
                     </form>
                 </div>
             </div>
@@ -191,62 +241,7 @@
     
     
     <!-- Contact Section -->
-    <section id="contact" class="">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12 text-center">
-                    <h2 class="section-heading wow animated pulse animated">HUBUNGI KAMI</h2><hr />
-                    <h3 class="section-subheading text-muted wow animated pulse animated">Sebarang masalah atau cadangan berkenaan sistem kami sila hubungi kami :</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-				<div class="col-sm-4 contact-icon">
-                                    <a href="https://www.abmutara.com.my/" target="blank"><i class="fa fa-search  wow animated zoomIn animation-delay-4"> ABM Utara</i></a>
-				</div>
-				<div class="col-sm-4 contact-icon">
-					<i class="fa fa-phone  wow animated zoomIn animation-delay-4"> 04-9242200</i>
-				</div>
-				<div class="col-sm-4 contact-icon">
-					<i class="fa fa-envelope  wow animated zoomIn animation-delay-5"> abm.utara@gmail.com</i>
-				</div>
-                    <form name="sentMessage" id="contactForm" novalidate>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Nama *" id="name" required data-validation-required-message="Please enter your name.">
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control" placeholder="Email *" id="email" required data-validation-required-message="Please enter your email address.">
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                                <div class="form-group">
-                                    <input type="tel" class="form-control" placeholder="No Telefon *" id="phone" required data-validation-required-message="Please enter your phone number.">
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <textarea class="form-control" placeholder="Masalah / Cadangan *" id="message" required data-validation-required-message="Please enter a message."></textarea>
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="col-sm-12 text-center">
-                                <div id="success"></div>
-						<div class="skill-btn">
-						<button type="submit" class="hvr-bounce-to-right scroll btn btn-xl"> Submit </button>
-						</div>
-                                
-                            </div>
-                            
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
+    
 
     <footer class="copyright">
         <div class="container">

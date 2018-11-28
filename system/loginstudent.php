@@ -30,4 +30,6 @@ if($db->query($new_sql))
     else header("Location:access/std/");
 }
 }else {header("location:../pelatih.php?error=Error: ID pengunna atau kata laluan#services");}
-}else {header("location:../pelatih.php?error=Error: ID pengunna atau kata laluan#services");}}
+}else {header("location:../pelatih.php?error=Error: ID pengunna atau kata laluan#services");}}elseif (isset($_POST['forget'])) {
+        header("location:../stdchangepass.php");
+    }

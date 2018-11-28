@@ -174,10 +174,19 @@
                                 <div class="skill-btn2">
                                     <input type="hidden" name="access" value="tusb"/>
                                         <input type="submit" name="login" value="Log Masuk" class="hvr-bounce-to-right scroll btn btn-xl"/>
-                                        <input type="submit" name="forget" value="Lupa Kata Laluan " class="hvr-bounce-to-right scroll btn btn-xl" />
+                                        <!--<input type="submit" name="forget" value="Lupa Kata Laluan " class="hvr-bounce-to-right scroll btn btn-xl" />-->
                                     </div>
                             </div>
                         </div>
+                    </form>
+                    <form method="post" action="system/login.php" style="margin-top: 20px">
+                        <div class="col-sm-12 text-center">
+                                <div id="success"></div>
+                                <div class="skill-btn2">
+                                    <input type="hidden" name="access" value="abm"/>
+                                        <input type="submit" name="forget" value="Lupa Kata Laluan " class="hvr-bounce-to-right scroll btn btn-xl" />
+                                    </div>
+                            </div>
                     </form>
                 </div>
             </div>

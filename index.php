@@ -12,6 +12,7 @@ and open the template in the editor.
     <body>
         <?php
        echo 'New commit test';
+       echo 'just add a line';
         ?>
     </body>
 </html>

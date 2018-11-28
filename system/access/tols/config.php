@@ -21,7 +21,7 @@
 //    $dbHost = "localhost";
 //$db = new mysqli($dbHost, $dbUser, $dbPass, $dbDatabase);
 
-$db = mysqli_connect("localhost","root","","abm");
+$db = mysqli_connect("localhost","","","abm");
 //$db = mysqli_connect("mysql.hostinger.in","u852052876_abm","123456","u852052876_abm");
 //$db = mysqli_connect("localhost","root","ROOT","abm");
 if($db->connect_errno > 0){

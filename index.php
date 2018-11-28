@@ -15,4 +15,3 @@ and open the template in the editor.
        echo 'just add a line';
         ?>
     </body>
-</html>

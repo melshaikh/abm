@@ -1,0 +1,1 @@
+SELECT * FROM `cohort` WHERE `area_id` = '42' AND ((`sdate` BETWEEN '2016-01-01' AND '2016-12-31' OR `edate` BETWEEN '2016-01-01' AND '2016-12-31') OR (`sdate` < '2016-01-01' AND `edate` > '2016-12-31'))
